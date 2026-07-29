@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+set -Eeuo pipefail
+
+if (( $# != 2 )); then
+    printf 'Usage: %s SAVE_DIRECTORY BACKUP_ROOT\n' "$0" >&2
+    exit 2
+fi
+
+readonly save_directory="$1"
+readonly backup_root="$2"
+readonly timestamp="$(date +%Y%m%d-%H%M%S)"
+readonly game_name="$(basename "$save_directory")"
+readonly destination="$backup_root/$game_name-$timestamp"
+
+if [[ ! -d "$save_directory" ]]; then
+    printf 'Save directory does not exist: %s\n' "$save_directory" >&2
+    exit 1
+fi
+
+mkdir -p "$backup_root"
+cp -a "$save_directory" "$destination"
+
+printf 'Created backup: %s\n' "$destination"
+

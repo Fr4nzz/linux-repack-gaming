@@ -1,0 +1,116 @@
+#!/usr/bin/env bash
+set -Eeuo pipefail
+
+usage() {
+    cat <<'EOF'
+Usage:
+  install-dodi-oodle-fix --wine WINE --prefix PREFIX --setup SETUP.EXE
+
+Mirrors Oodle helpers already embedded in a DODI/Inno installer into Wine's
+executable search directory for the lifetime of the installer.
+EOF
+}
+
+wine_binary=""
+wine_prefix=""
+setup_exe=""
+
+while (( $# )); do
+    case "$1" in
+        --wine)
+            wine_binary="${2:?Missing value for --wine}"
+            shift 2
+            ;;
+        --prefix)
+            wine_prefix="${2:?Missing value for --prefix}"
+            shift 2
+            ;;
+        --setup)
+            setup_exe="${2:?Missing value for --setup}"
+            shift 2
+            ;;
+        -h|--help)
+            usage
+            exit 0
+            ;;
+        *)
+            printf 'Unknown argument: %s\n' "$1" >&2
+            usage >&2
+            exit 2
+            ;;
+    esac
+done
+
+if [[ -z "$wine_binary" || -z "$wine_prefix" || -z "$setup_exe" ]]; then
+    usage >&2
+    exit 2
+fi
+
+if [[ ! -x "$wine_binary" ]]; then
+    printf 'Wine executable not found: %s\n' "$wine_binary" >&2
+    exit 1
+fi
+
+if [[ ! -f "$setup_exe" ]]; then
+    printf 'Installer not found: %s\n' "$setup_exe" >&2
+    exit 1
+fi
+
+readonly windows_user="${USER:-user}"
+readonly temp_root="$wine_prefix/drive_c/users/$windows_user/AppData/Local/Temp"
+readonly helper_target="$wine_prefix/drive_c/windows/syswow64"
+readonly state_dir="$(mktemp -d)"
+readonly helpers=(oo2recm.exe oo2reck.exe oo2core_7_win64.dll)
+
+mkdir -p "$temp_root" "$helper_target"
+
+cleanup() {
+    local helper
+    for helper in "${helpers[@]}"; do
+        rm -f "$helper_target/$helper"
+        if [[ -e "$state_dir/$helper.original" ]]; then
+            mv "$state_dir/$helper.original" "$helper_target/$helper"
+        fi
+    done
+    rmdir "$state_dir" 2>/dev/null || true
+}
+
+for helper in "${helpers[@]}"; do
+    if [[ -e "$helper_target/$helper" ]]; then
+        mv "$helper_target/$helper" "$state_dir/$helper.original"
+    fi
+done
+
+trap cleanup EXIT INT TERM
+
+export WINEPREFIX="$wine_prefix"
+export WINEARCH=win64
+
+"$wine_binary" "$setup_exe" &
+readonly setup_pid=$!
+
+mirror_helpers() {
+    local helper source_file
+
+    while kill -0 "$setup_pid" 2>/dev/null; do
+        for helper in "${helpers[@]}"; do
+            [[ -e "$helper_target/$helper" ]] && continue
+            source_file="$(find "$temp_root" -maxdepth 2 -type f \
+                -iname "$helper" -print -quit 2>/dev/null || true)"
+            if [[ -n "$source_file" ]]; then
+                cp -f "$source_file" "$helper_target/$helper"
+                printf 'Mirrored %s\n' "$helper"
+            fi
+        done
+        sleep 0.05
+    done
+}
+
+mirror_helpers &
+readonly mirror_pid=$!
+
+installer_status=0
+wait "$setup_pid" || installer_status=$?
+wait "$mirror_pid" || true
+exit "$installer_status"
+
