@@ -1,4 +1,7 @@
-# Practical Linux Game Setup
+# Linux Repack Gaming
+
+Practical DODI, FitGirl, KaOs, ElAmigos, and similar repack installation
+workflows for Wine—plus UMU, Proton, Gamescope, Steam, and Sunshine integration.
 
 Task-focused guides for installing and launching Windows games on Linux, adding
 desktop and Steam integration, and optionally using Gamescope, a dedicated
