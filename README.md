@@ -21,6 +21,7 @@ actually tested instead of attempting to cover every launcher.
 | Goal | Guide |
 |---|---|
 | Install a compressed Windows game installer | [Install repacks with Wine](guides/install-repacks-with-wine.md) |
+| Extract only an optional language or audio pack | [Extract one repack component](guides/extract-one-repack-component.md) |
 | Launch an installed game with Proton | [Launch games with UMU](guides/launch-games-with-umu.md) |
 | Control resolution, scaling, or fullscreen behavior | [Configure Gamescope](guides/configure-gamescope.md) |
 | Add a proper desktop/menu shortcut and icon | [Create desktop shortcuts](guides/create-desktop-shortcuts.md) |
