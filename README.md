@@ -16,6 +16,21 @@ This is not the only good approach. Bottles, Heroic, Lutris, or Steam itself may
 be more convenient for other users. These guides document the workflow that was
 actually tested instead of attempting to cover every launcher.
 
+## Start with the simplest path
+
+Do not begin with every workaround enabled:
+
+1. Verify the repack's files or checksums.
+2. Try the installer with an ordinary current Wine/Lutris configuration.
+3. Use the patched-Wine workflow only when extraction reproduces an
+   ISDone/Unarc, WoW64, progress-rendering, or related compatibility failure.
+4. After installation, use a fresh runtime prefix and test the game directly.
+5. Add Gamescope only when it supplies a needed resolution, scaling, capture,
+   fullscreen, or presentation fix.
+
+The specialized fixes remain valuable because they are isolated and
+reproducible; they are not intended as mandatory layers for every game.
+
 ## Choose what you need
 
 | Goal | Guide |
@@ -54,3 +69,16 @@ authorized to install.
 The workflows are based on CachyOS/Arch Linux with KDE Wayland and a hybrid
 AMD/NVIDIA laptop. Commands are written to be adaptable; paths and GPU IDs must
 be changed for the target machine.
+
+## Community references
+
+This repository complements existing community workflows instead of replacing
+them:
+
+- [Lutris repack installation guide](https://www.reddit.com/r/LinuxCrackSupport/comments/yqfirv/)
+- [Lutris installation and troubleshooting guide](https://www.reddit.com/r/LinuxCrackSupport/comments/1rlpyg4/)
+- [fitgirl-wine development and testing thread](https://www.reddit.com/r/LinuxCrackSupport/comments/1v6so9f/)
+
+Those guides are especially useful for people who prefer a graphical launcher.
+This repository focuses on the command-line UMU workflow and on installer
+failures the general Lutris guides explicitly do not solve.
