@@ -40,4 +40,3 @@ Steam → Settings → Controller → Test Device Inputs
 If Steam sees the controller but the game does not, enable Steam Input for that
 shortcut and ensure Steam launches the wrapper rather than attaching after the
 game has started.
-

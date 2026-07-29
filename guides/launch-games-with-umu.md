@@ -70,4 +70,3 @@ nvidia-smi
 
 Do not apply NVIDIA variables globally when the desktop and panel are driven by
 the integrated AMD GPU.
-

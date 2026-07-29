@@ -50,4 +50,3 @@ authorized to install.
 The workflows are based on CachyOS/Arch Linux with KDE Wayland and a hybrid
 AMD/NVIDIA laptop. Commands are written to be adaptable; paths and GPU IDs must
 be changed for the target machine.
-

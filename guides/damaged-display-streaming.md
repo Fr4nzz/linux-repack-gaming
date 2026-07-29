@@ -41,4 +41,3 @@ size: 960,720
 
 Do not match all Wine or Gamescope windows, and do not overwrite unrelated KWin
 rules.
-

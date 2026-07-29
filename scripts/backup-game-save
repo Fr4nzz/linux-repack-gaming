@@ -21,4 +21,3 @@ mkdir -p "$backup_root"
 cp -a "$save_directory" "$destination"
 
 printf 'Created backup: %s\n' "$destination"
-

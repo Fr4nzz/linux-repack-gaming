@@ -95,4 +95,3 @@ should continue growing beyond the first output file.
 - Avoid changing Wine, CPU topology, RAM limits, and storage paths together.
 - If the Oodle wrapper changes nothing, collect process and file traces before
   trying more compatibility variables.
-

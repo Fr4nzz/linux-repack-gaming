@@ -113,4 +113,3 @@ installer_status=0
 wait "$setup_pid" || installer_status=$?
 wait "$mirror_pid" || true
 exit "$installer_status"
-

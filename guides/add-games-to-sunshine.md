@@ -46,4 +46,3 @@ game does not:
 Use Gamescope when the stream needs a fixed resolution, fit/fill behavior, or a
 captureable window. If a game is black only in Moonlight, first determine whether
 Sunshine is capturing the launcher, desktop, or final game surface.
-

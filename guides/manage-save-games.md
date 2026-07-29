@@ -44,4 +44,3 @@ Stop the game before copying saves.
 
 Some games bind saves to an account or require a container/index file to be
 updated. Restore the backup if the imported save is not recognized.
-

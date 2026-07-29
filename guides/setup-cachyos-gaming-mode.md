@@ -58,4 +58,3 @@ sudo systemctl restart sddm
 
 Restarting SDDM terminates graphical sessions, so use it only after work is
 saved.
-

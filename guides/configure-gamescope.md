@@ -57,4 +57,3 @@ or Alt+Tab problems:
 2. Test SDL and Wayland backends separately.
 3. Change Gamescope WSI only as a separate variable.
 4. Test direct launch to determine whether Gamescope is involved.
-

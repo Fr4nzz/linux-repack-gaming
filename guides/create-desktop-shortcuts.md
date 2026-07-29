@@ -48,4 +48,3 @@ chmod +x "$HOME/Desktop/my-game.desktop"
 ```
 
 Keep `Terminal=false` so launching the game does not open a terminal window.
-
