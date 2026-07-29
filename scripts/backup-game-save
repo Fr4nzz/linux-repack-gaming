@@ -18,6 +18,16 @@ if [[ ! -d "$save_directory" ]]; then
 fi
 
 mkdir -p "$backup_root"
+
+readonly save_real="$(realpath "$save_directory")"
+readonly backup_real="$(realpath "$backup_root")"
+
+if [[ "$backup_real" == "$save_real" || "$backup_real" == "$save_real/"* ]]; then
+    printf 'Backup root must not be inside the save directory: %s\n' \
+        "$backup_root" >&2
+    exit 1
+fi
+
 cp -a "$save_directory" "$destination"
 
 printf 'Created backup: %s\n' "$destination"

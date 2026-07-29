@@ -4,7 +4,8 @@ set -Eeuo pipefail
 usage() {
     cat <<'EOF'
 Usage:
-  install-dodi-oodle-fix --wine WINE --prefix PREFIX --setup SETUP.EXE
+  install-dodi-oodle-fix --wine WINE --prefix PREFIX --setup SETUP.EXE \
+    [--windows-user USER]
 
 Mirrors Oodle helpers already embedded in a DODI/Inno installer into Wine's
 executable search directory for the lifetime of the installer.
@@ -14,6 +15,7 @@ EOF
 wine_binary=""
 wine_prefix=""
 setup_exe=""
+windows_user=""
 
 while (( $# )); do
     case "$1" in
@@ -27,6 +29,10 @@ while (( $# )); do
             ;;
         --setup)
             setup_exe="${2:?Missing value for --setup}"
+            shift 2
+            ;;
+        --windows-user)
+            windows_user="${2:?Missing value for --windows-user}"
             shift 2
             ;;
         -h|--help)
@@ -56,7 +62,18 @@ if [[ ! -f "$setup_exe" ]]; then
     exit 1
 fi
 
-readonly windows_user="${USER:-user}"
+if [[ -z "$windows_user" ]]; then
+    for candidate in "$wine_prefix"/drive_c/users/*; do
+        [[ -d "$candidate/AppData/Local/Temp" ]] || continue
+        windows_user="$(basename "$candidate")"
+        break
+    done
+fi
+
+if [[ -z "$windows_user" ]]; then
+    windows_user="${USER:-user}"
+fi
+
 readonly temp_root="$wine_prefix/drive_c/users/$windows_user/AppData/Local/Temp"
 readonly helper_target="$wine_prefix/drive_c/windows/syswow64"
 readonly state_dir="$(mktemp -d)"

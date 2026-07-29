@@ -7,12 +7,32 @@ readonly GAME_EXE="Game.exe"
 readonly GAME_PREFIX="/path/to/prefix"
 readonly GAME_PROTON="/path/to/Proton"
 readonly GAME_ID="umu-default"
+readonly GAME_STORE=""
 
-cd "$GAME_DIR"
+for required in "$GAME_DIR" "$GAME_PREFIX" "$GAME_PROTON"; do
+    if [[ ! -e "$required" ]]; then
+        printf 'Required path does not exist: %s\n' "$required" >&2
+        exit 1
+    fi
+done
+
+if [[ ! -f "$GAME_DIR/$GAME_EXE" ]]; then
+    printf 'Game executable does not exist: %s\n' "$GAME_DIR/$GAME_EXE" >&2
+    exit 1
+fi
+
+if ! command -v umu-run >/dev/null; then
+    printf 'umu-run is not installed or not in PATH\n' >&2
+    exit 127
+fi
 
 export WINEPREFIX="$GAME_PREFIX"
 export PROTONPATH="$GAME_PROTON"
 export GAMEID="$GAME_ID"
+
+if [[ -n "$GAME_STORE" ]]; then
+    export STORE="$GAME_STORE"
+fi
 
 # Uncomment for NVIDIA PRIME render offload on a hybrid laptop.
 # export __NV_PRIME_RENDER_OFFLOAD=1
@@ -20,4 +40,5 @@ export GAMEID="$GAME_ID"
 # export __GLX_VENDOR_LIBRARY_NAME=nvidia
 # export VK_DRIVER_FILES=/usr/share/vulkan/icd.d/nvidia_icd.json
 
+cd "$GAME_DIR"
 exec umu-run "$GAME_EXE" "$@"

@@ -1,46 +1,127 @@
 # Set up CachyOS Gaming Mode
 
-A separate Gaming Mode logs out of Plasma and starts Steam Gamepad UI under one
-Gamescope session. It can free memory used by browsers and desktop applications
-and avoids KWin interactions while playing demanding games.
+A separate Gaming Mode logs out of Plasma and starts Steam Gamepad UI under an
+embedded Gamescope session. It can free memory used by browsers and desktop
+applications and removes KWin from the game's presentation path.
 
-## Architecture
+It is optional. It did not fix the AC Shadows NVIDIA hang in the tested setup;
+that issue required a title-specific Proton/vkd3d workaround.
 
-On a muxless AMD/NVIDIA laptop:
+## 1. Understand the session boundary
+
+Typical muxless-laptop architecture:
 
 ```text
 SDDM
-  → Gamescope DRM session on AMD
+  → Gamescope DRM session on the display-connected iGPU
     → Steam Gamepad UI
-      → per-game UMU wrapper
-        → game rendered on NVIDIA
+      → Linux per-game wrapper
+        → UMU/Proton game rendered on the dGPU
 ```
 
-Keep Plasma as the normal/default session during testing.
+Entering Gaming Mode ends the Plasma login. Save desktop work first. Returning
+creates a new Plasma session; it does not suspend and restore every process.
 
-## Practical requirements
+## 2. Start with CachyOS's packaged session
 
-- Add a separate SDDM Wayland session entry.
-- Run outer Gamescope on the GPU connected to the internal panel.
-- Do not export NVIDIA PRIME variables session-wide.
-- Do not enable Gamescope WSI globally; scope it per game.
-- Do not wrap every game in a second Gamescope instance.
-- Keep zram enabled.
-- Provide a reliable `loginctl terminate-session` exit shortcut.
+Install the supported package:
 
-## Session switching
+```bash
+sudo pacman -S --needed \
+  gamescope-session-cachyos \
+  gamescope \
+  steam \
+  mangohud
+```
 
-A desktop “Enter Gaming Mode” shortcut can:
+Confirm it installed an SDDM session:
 
-1. Save the Gaming Mode session as the next SDDM session.
-2. Configure one-shot autologin for the current user.
-3. Log out of Plasma.
+```bash
+test -f \
+  /usr/share/wayland-sessions/gamescope-session.desktop
+```
 
-Returning to desktop reverses the selection and terminates Gaming Mode. Test this
-several times before relying on it. An incorrect SDDM setup can simply return to
-the login screen or ask for a password instead of starting Steam.
+Save work, log out normally, select the Gamescope session in SDDM, and log in.
+Do not configure autologin for the first test.
 
-## Recovery
+Test:
+
+1. Steam Gamepad UI appears.
+2. Display mode and orientation are correct.
+3. Audio, network, and controller work.
+4. A lightweight game launches and exits.
+5. Exiting Steam returns to SDDM.
+6. Plasma still starts normally afterward.
+
+## 3. Hybrid-GPU rules
+
+- Run the outer compositor on the GPU connected to the display.
+- Do not export NVIDIA PRIME or NVIDIA ICD variables session-wide.
+- Apply dGPU variables only inside each demanding game's launcher.
+- Do not enable Gamescope WSI globally merely because one title needs it.
+- Do not add a second nested Gamescope to every game.
+
+Use:
+
+```bash
+vulkaninfo --summary
+lspci -nnk | grep -A3 -E 'VGA|3D|Display'
+```
+
+to identify devices. Never copy another laptop's GPU ID.
+
+The packaged session may make SteamOS-oriented policy choices. Inspect its
+effective environment and test per title before treating it as a universal
+hybrid-GPU solution.
+
+## 4. Add games
+
+Follow [Add games to Steam](add-games-to-steam.md). Each non-Steam shortcut
+should target the same tested Linux wrapper used on the desktop:
+
+- No forced Steam compatibility tool.
+- No duplicated Proton command.
+- NVIDIA variables scoped inside the game launcher.
+- Nested Gamescope disabled in Gaming Mode unless explicitly required.
+
+## 5. Memory and power policy
+
+Keep zram enabled initially. Logging out of Plasma already removes the largest
+desktop processes. Disabling zram trades compressed memory capacity for less
+compression work and is not a universal gaming optimization.
+
+Use a balanced platform profile unless measurements show a CPU-bound benefit
+from performance mode. A GPU-bound game at a 60 FPS cap often gains fan noise
+without useful performance.
+
+## 6. Autologin and desktop switchers
+
+One-shot session switching and autologin are display-manager policy, not
+ordinary desktop shortcuts. A mistake can leave the computer at SDDM, loop back
+into Gaming Mode, or weaken login security.
+
+Only add automation after manual entry/exit works repeatedly. Before changing
+SDDM:
+
+```bash
+sudo cp -a /etc/sddm.conf /etc/sddm.conf.backup 2>/dev/null || true
+sudo cp -a /etc/sddm.conf.d /etc/sddm.conf.d.backup 2>/dev/null || true
+```
+
+Review every existing `[Autologin]` section:
+
+```bash
+sudo grep -R -n \
+  -E '^\\[Autologin\\]|^User=|^Session=|^Relogin=' \
+  /etc/sddm.conf /etc/sddm.conf.d 2>/dev/null
+```
+
+This repository intentionally does not ship a universal autologin writer.
+Session names, SDDM policy, encryption, wallet behavior, and security
+requirements differ by machine. Use CachyOS's current session integration or a
+machine-specific audited script.
+
+## 7. Recovery
 
 If Gaming Mode is black or frozen:
 
@@ -48,13 +129,32 @@ If Gaming Mode is black or frozen:
 Ctrl+Alt+F3
 ```
 
-Then:
+Log in, then:
 
 ```bash
 loginctl list-sessions
+loginctl session-status SESSION_ID
 loginctl terminate-session SESSION_ID
+```
+
+If SDDM does not recover:
+
+```bash
 sudo systemctl restart sddm
 ```
 
-Restarting SDDM terminates graphical sessions, so use it only after work is
-saved.
+Restarting SDDM terminates graphical sessions. Use it only after work is saved.
+
+## 8. Acceptance test
+
+Before regular use, complete:
+
+- Three manual logins and clean exits.
+- Controller-only navigation and exit.
+- One lightweight and one demanding game.
+- Correct iGPU compositor/dGPU renderer boundary.
+- No duplicate overlays.
+- No hidden game process after exit.
+- Plasma login and KDE Wallet behavior remain understood.
+
+Keep Plasma as the default/recoverable session until these tests pass.

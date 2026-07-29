@@ -27,7 +27,15 @@ In the tested repack, `file` identified the `.doi` file as a FreeArc archive.
 
 ## 2. Inspect it before extracting
 
-Install a compatible FreeArc `unarc` implementation, then list the archive:
+Install a compatible FreeArc implementation that supplies `unarc`. On
+Arch-based distributions this may come from the AUR, so inspect the current
+package and its source before installing it. Then confirm the command exists:
+
+```bash
+command -v unarc
+```
+
+List the archive:
 
 ```bash
 unarc l "/path/to/repack/Spanish-Spain.doi"
@@ -72,7 +80,13 @@ installation screen. Inno-based installers normally unpack their matching
 helpers under:
 
 ```text
-$WINEPREFIX/drive_c/users/$USER/AppData/Local/Temp/is-*.tmp/
+$WINEPREFIX/drive_c/users/<Wine-user>/AppData/Local/Temp/is-*.tmp/
+```
+
+Discover the Wine username rather than assuming it matches the Linux username:
+
+```bash
+find "$WINEPREFIX/drive_c/users" -path '*/AppData/Local/Temp' -type d
 ```
 
 Look for:
@@ -91,13 +105,16 @@ Copy that complete helper set into a temporary working directory while the
 installer is open. These files are version-matched to the repack; do not fetch
 random replacements from DLL-download sites.
 
-The advanced fallback is a small 32-bit Windows wrapper that:
+The advanced fallback is a small 32-bit Windows wrapper that calls the
+installer's DLL directly. This repository intentionally does not automate it
+because the `FreeArcExtract` arguments and companion codecs can vary between
+repacks. Such a wrapper must:
 
-1. Loads the extracted `unarc.dll`.
-2. Resolves its `FreeArcExtract` export.
-3. Calls it with `x`, `-o+`, a staging destination, a temporary directory, and
+1. Load the extracted `unarc.dll`.
+2. Resolve its `FreeArcExtract` export.
+3. Call it with `x`, `-o+`, a staging destination, a temporary directory, and
    the optional archive path.
-4. Runs under the same Wine prefix beside the copied codec helpers.
+4. Run under the same Wine prefix beside the copied codec helpers.
 
 Use Windows-style paths visible inside that prefix, for example:
 
@@ -107,8 +124,10 @@ C:\LanguageStage
 C:\LanguageTemp
 ```
 
-This is preferable to rerunning a multi-hour installation merely to recover one
-optional component. It also isolates extraction from the working game.
+Use this only after verifying the DLL export and argument layout for that
+specific installer. An incompatible call can simply crash. For most users,
+rerunning the installer with only the optional component selected is safer,
+even if it is slower.
 
 ## 5. Compare with the installed game
 
