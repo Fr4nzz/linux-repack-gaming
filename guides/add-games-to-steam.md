@@ -108,7 +108,7 @@ Then open the shortcut's controller settings. If Steam sees the controller but
 the game does not:
 
 1. Enable Steam Input for that shortcut.
-2. Confirm Steam launched the wrapper rather than attaching to an existing game.
+2. Check that Steam launched the wrapper instead of attaching to an existing game.
 3. Restart the game after changing controller enumeration.
 4. Avoid stacking Steam Input with a second virtual-controller mapper unless
    the title requires it.

@@ -1,7 +1,7 @@
 # Add games to Sunshine
 
-Sunshine applications let Moonlight start a game remotely. A well-behaved
-wrapper remains alive until the game exits so Sunshine can track the session.
+Sunshine applications let Moonlight start a game remotely. The wrapper must
+remain alive until the game exits so Sunshine can track it.
 
 ## 1. Install and start Sunshine
 
@@ -32,7 +32,7 @@ If using a custom configuration directory or a fork such as Apollo, identify
 the actual service and config first. Do not edit Sunshine's default files while
 another service is the active host.
 
-## 2. Verify the canonical launcher locally
+## 2. Test the launcher locally
 
 Before adding it:
 
@@ -40,9 +40,9 @@ Before adding it:
 "/absolute/path/to/launch-my-game"
 ```
 
-Confirm:
+Check:
 
-- Gameplay starts, not only a launcher.
+- The game starts, not just its launcher.
 - Correct GPU and resolution are used.
 - Local controller input works.
 - The wrapper remains alive through launcher-to-game handoff.
@@ -61,8 +61,8 @@ Command:          /absolute/path/to/launch-my-game
 Working Directory:/absolute/path/to/game
 ```
 
-Leave detached commands empty unless the launcher must intentionally outlive
-the stream. Add an image if wanted, save, and restart Sunshine only when the UI
+Leave detached commands empty unless the launcher must outlive the stream. Add
+an image if wanted, save, and restart Sunshine only when the UI
 requests it.
 
 Use an absolute command and working directory. Avoid:
@@ -105,7 +105,7 @@ Then:
 1. Confirm Sunshine created the expected virtual controller.
 2. Test the same launcher locally.
 3. Restart the game after the controller connects so enumeration happens again.
-4. Route the launch through Steam only when Steam Input is actually required.
+4. Route the launch through Steam only when Steam Input is required.
 5. Avoid multiple controller-merging or translation layers.
 
 ## 6. Capture and Gamescope

@@ -1,8 +1,7 @@
 # Create desktop shortcuts
 
-Create and test the canonical shell launcher before adding graphical shortcuts.
-The desktop, application menu, Steam, and Sunshine should all call the same
-launcher rather than duplicating Proton commands.
+Create and test the shell launcher before adding graphical shortcuts. Use the
+same launcher from the desktop, application menu, Steam and Sunshine.
 
 ## 1. Install desktop and icon tools
 
@@ -65,8 +64,8 @@ mkdir -p "/tmp/my-game-frames"
 icotool -x -o "/tmp/my-game-frames" "/tmp/my-game.ico"
 ```
 
-Some executables contain several icon groups and one may be malformed. Do not
-concatenate every group into one `.ico`; inspect them individually.
+Executables may contain several icon groups. Inspect them separately instead of
+combining them into one `.ico`.
 
 Choose the best extracted frame for each installed size. If a high-resolution
 frame is available, ImageMagick can create exact PNG dimensions:
@@ -80,8 +79,8 @@ install -Dm0644 "/tmp/my-game-256.png" \
   "$HOME/.local/share/icons/hicolor/256x256/apps/my-game.png"
 ```
 
-Repeat for useful sizes such as 16, 32, 48, 64, 128, and 256. Prefer native
-embedded frames rather than enlarging a tiny icon.
+Repeat for useful sizes such as 16, 32, 48, 64, 128 and 256. Prefer native
+embedded frames over enlarged small icons.
 
 ## 4. Refresh KDE caches
 

@@ -4,9 +4,8 @@ UMU runs Proton outside Steam while supplying the runtime and environment Proton
 expects. It is useful for independently installed games and works from shell
 scripts, desktop entries, non-Steam shortcuts, and Sunshine.
 
-Alternatives include Bottles, Heroic, Lutris, plain Wine, or adding an
-executable directly to Steam. UMU is used here because its CLI configuration is
-inspectable and easy to automate.
+Alternatives include Bottles, Heroic, Lutris, Wine and Steam. This workflow uses
+UMU because its command-line configuration is easy to inspect and automate.
 
 ## 1. Install UMU and a Proton runner
 
@@ -50,14 +49,14 @@ UMU's upstream documentation defines `WINEPREFIX`, `GAMEID`, `STORE`, and
 
 ## 2. Create a dedicated runtime prefix
 
-Do not reuse the disposable prefix that ran a compressed installer:
+Create a runtime prefix separate from the installer prefix:
 
 ```bash
 mkdir -p "/path/to/game-prefix"
 ```
 
-UMU initializes it on first launch. Keep one prefix per game unless two
-executables demonstrably need to share one.
+UMU initializes it on first launch. Keep one prefix per game unless its
+executables need to share one.
 
 ## 3. Create a per-game launcher
 
@@ -106,8 +105,7 @@ GAMEID=umu-123456
 STORE=steam
 ```
 
-Do not copy another game's ID merely to obtain a Proton fix; fixes are
-title-specific.
+Do not copy another game's ID to obtain a Proton fix. Fixes are title-specific.
 
 ## 5. Hybrid AMD/NVIDIA laptops
 
@@ -166,11 +164,10 @@ Turn it off for normal play.
 5. Keep the previous runner until the new one passes the same save and scene.
 
 A higher version number does not guarantee better behavior for a specific game.
-AC Shadows, for example, required a particular debug/breadcrumb build for a
-reproducible NVIDIA hang; replacing it merely because another GE release was
-newer would remove the tested workaround.
+AC Shadows required a debug/breadcrumb build for a reproducible NVIDIA hang.
+Replacing it with a newer GE release would remove the tested workaround.
 
-## 8. Confirm a clean exit
+## 8. Check for a clean exit
 
 Quit from the game's own menu and verify its prefix has no remaining processes:
 

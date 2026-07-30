@@ -83,7 +83,7 @@ helpers under:
 $WINEPREFIX/drive_c/users/<Wine-user>/AppData/Local/Temp/is-*.tmp/
 ```
 
-Discover the Wine username rather than assuming it matches the Linux username:
+Find the Wine username:
 
 ```bash
 find "$WINEPREFIX/drive_c/users" -path '*/AppData/Local/Temp' -type d
@@ -105,10 +105,9 @@ Copy that complete helper set into a temporary working directory while the
 installer is open. These files are version-matched to the repack; do not fetch
 random replacements from DLL-download sites.
 
-The advanced fallback is a small 32-bit Windows wrapper that calls the
-installer's DLL directly. This repository intentionally does not automate it
-because the `FreeArcExtract` arguments and companion codecs can vary between
-repacks. Such a wrapper must:
+The advanced fallback is a 32-bit Windows wrapper that calls the installer's
+DLL. `FreeArcExtract` arguments and companion codecs vary between repacks, so
+the repository does not automate this step. The wrapper must:
 
 1. Load the extracted `unarc.dll`.
 2. Resolve its `FreeArcExtract` export.
@@ -124,14 +123,13 @@ C:\LanguageStage
 C:\LanguageTemp
 ```
 
-Use this only after verifying the DLL export and argument layout for that
-specific installer. An incompatible call can simply crash. For most users,
-rerunning the installer with only the optional component selected is safer,
-even if it is slower.
+Use this only after checking the DLL export and argument layout. An incompatible
+call can crash. Rerunning the installer with only the optional component
+selected is slower but easier.
 
 ## 5. Compare with the installed game
 
-Find which staged files are actually missing:
+Find which staged files are missing:
 
 ```bash
 stage="/path/to/staging"
@@ -189,8 +187,8 @@ such as `dlc_20/`.
 
 ## 7. Test before cleaning up
 
-Start the game, select the newly installed voice language, and test both ordinary
-dialogue and DLC content. Keep the staging directory until this succeeds.
+Start the game, select the installed voice language, and test dialogue and DLC
+content. Keep the staging directory until this succeeds.
 
 After verification, remove the staging directory and disposable Wine prefix if
 they are no longer needed. Keep the small configuration backup.

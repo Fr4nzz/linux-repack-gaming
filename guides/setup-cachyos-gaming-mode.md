@@ -34,7 +34,7 @@ sudo pacman -S --needed \
   mangohud
 ```
 
-Confirm it installed an SDDM session:
+Check that it installed an SDDM session:
 
 ```bash
 test -f \
@@ -58,7 +58,7 @@ Test:
 - Run the outer compositor on the GPU connected to the display.
 - Do not export NVIDIA PRIME or NVIDIA ICD variables session-wide.
 - Apply dGPU variables only inside each demanding game's launcher.
-- Do not enable Gamescope WSI globally merely because one title needs it.
+- Do not enable Gamescope WSI globally because one title needs it.
 - Do not add a second nested Gamescope to every game.
 
 Use:
@@ -70,9 +70,8 @@ lspci -nnk | grep -A3 -E 'VGA|3D|Display'
 
 to identify devices. Never copy another laptop's GPU ID.
 
-The packaged session may make SteamOS-oriented policy choices. Inspect its
-effective environment and test per title before treating it as a universal
-hybrid-GPU solution.
+The packaged session uses SteamOS-oriented defaults. Check its environment and
+test each game.
 
 ## 4. Add games
 
@@ -96,9 +95,8 @@ without useful performance.
 
 ## 6. Autologin and desktop switchers
 
-One-shot session switching and autologin are display-manager policy, not
-ordinary desktop shortcuts. A mistake can leave the computer at SDDM, loop back
-into Gaming Mode, or weaken login security.
+One-shot session switching and autologin depend on SDDM. A wrong session name
+can return to SDDM or loop back into Gaming Mode.
 
 Only add automation after manual entry/exit works repeatedly. Before changing
 SDDM:
@@ -116,10 +114,9 @@ sudo grep -R -n \
   /etc/sddm.conf /etc/sddm.conf.d 2>/dev/null
 ```
 
-This repository intentionally does not ship a universal autologin writer.
-Session names, SDDM policy, encryption, wallet behavior, and security
-requirements differ by machine. Use CachyOS's current session integration or a
-machine-specific audited script.
+The repository does not include a universal autologin script because session
+names and SDDM settings differ by machine. Use CachyOS's session integration or
+a machine-specific script.
 
 ## 7. Recovery
 

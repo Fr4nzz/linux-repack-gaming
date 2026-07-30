@@ -138,9 +138,9 @@ specific experiment.
 
 ## 6. Dedicated Gaming Mode
 
-Inside an embedded Gamescope session, launch the game directly unless it
-demonstrably needs another virtual display. A second Gamescope adds another
-swapchain, scaling stage, and synchronization boundary.
+Inside an embedded Gamescope session, launch the game directly unless it needs
+another virtual display. A second Gamescope adds a swapchain, scaling stage and
+synchronization boundary.
 
 ## 7. Regression test
 

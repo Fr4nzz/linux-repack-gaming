@@ -5,17 +5,16 @@ SREP, or Oodle decompression.
 
 ## Scope and when to use this
 
-If an installer already works with ordinary Wine, Lutris, Bottles, Steam, or
-Proton, keep that simpler working path. This guide is for repeatable compressed
-installer failures such as:
+Use an existing Wine or graphical-launcher setup if it works. Use this guide
+for:
 
-- FitGirl-style installers hanging near 0% under new WoW64 Wine.
+- FitGirl installers hanging near 0% under WoW64 Wine.
 - ISDone/Unarc failures that persist with verified source archives.
-- KaOs-style missing progress or extraction rendering.
-- DODI installers whose bundled Oodle helper cannot be found by Wine.
+- KaOs installers with missing progress rendering.
+- DODI installers whose Oodle helper cannot be found by Wine.
 
-Installation and gameplay are separate stages. The patched Wine below runs the
-installer; it is not automatically the best runner for the installed game.
+The patched Wine runs the installer. Use Proton or another tested runner for
+the installed game.
 
 The complete example uses the same two fixes that allowed the tested Assassin's
 Creed Shadows DODI installer to extract approximately 151 GB under Linux:
@@ -40,23 +39,6 @@ These are related but not interchangeable roles in this workflow:
 
 `GE-Proton11-3` was useful for some installed games, but it is not the patched
 installer runtime documented here.
-
-## Security boundary
-
-A Wine prefix isolates configuration, not filesystem permissions. A Windows
-program running under Wine can normally access files your Linux user can
-access, and Wine commonly exposes the Linux filesystem through `Z:`.
-
-- Run installers only from sources you trust and are authorized to use.
-- Verify published checksums or the repack's verification files before running
-  the installer.
-- Never run Wine or the installer with `sudo`.
-- Do not treat a disposable prefix as a malware sandbox.
-- For genuinely untrusted software, use a separately permissioned account,
-  container, or virtual machine with no personal files mounted.
-
-Removing the prefix afterward removes its fake Windows environment; it cannot
-undo changes an untrusted process already made elsewhere.
 
 ## The exact tested Wine build
 
@@ -136,18 +118,6 @@ Leave enough space for the compressed repack, the installed game, temporary
 decompression data, and the prefix. Do not assume the installer's advertised
 final size is its peak temporary requirement.
 
-Use the repack's verification utility or published checksums when available.
-
-Locate a FitGirl-style verification batch file now:
-
-```bash
-find "$REPACK_SOURCE" -maxdepth 1 -type f \
-  \( -iname '*verify*.bat' -o -iname '*check*.bat' \) \
-  -printf '%f\n'
-```
-
-Run it after downloading Wine and creating the `R:` mapping in step 5.
-
 ### 4. Download and verify the patched Wine build
 
 ```bash
@@ -212,31 +182,6 @@ The resulting Linux directory will be:
 This mapping does not copy the repack or game. Wine drive letters are symbolic
 links to the existing Linux directories.
 
-Run the repack's verification batch file when supplied:
-
-```bash
-"$WINE" cmd /c \
-  'R:\Verify BIN files before installation.bat'
-```
-
-Replace the filename with the actual result found in step 3. If its quoting or
-current-directory assumptions fail, open a Wine command prompt:
-
-```bash
-"$WINE" cmd
-```
-
-Then run:
-
-```text
-R:
-dir
-"Verify BIN files before installation.bat"
-```
-
-Do not continue past failed source verification and expect a Wine setting to
-repair corrupt archive data.
-
 If an installer behaves poorly through a mapped source drive, stage its files
 inside the prefix instead:
 
@@ -285,10 +230,9 @@ versions are already inside the installer.
 
 In the installer:
 
-1. Select only languages and optional content actually wanted.
+1. Select the languages and optional content you want.
 2. Choose `D:\Assassin's Creed Shadows` as the destination.
-3. Disable optional redistributable downloads unless they are genuinely
-   required.
+3. Disable optional redistributable downloads unless required.
 4. Start installation and leave the launching terminal open.
 
 No `WINEDLLOVERRIDES` or Winetricks verbs were required for the successful
@@ -335,34 +279,7 @@ Windows. That means:
 - The extracted base files were not proof that the entire repack was healthy.
 - The late error did not invalidate the Linux installer fix.
 
-### 10. Collect a useful support report
-
-Before asking for help, record:
-
-```bash
-"$WINE" --version
-uname -a
-findmnt -T "$GAME_DESTINATION"
-df -h "$GAME_DESTINATION"
-free -h
-```
-
-Include:
-
-- Distribution, kernel, filesystem, CPU, GPU and driver.
-- Repacker/release name and exact game version, but no copyrighted links.
-- Exact Wine asset and checksum.
-- Whether source verification passed.
-- Complete ISDone/Unarc message and error number.
-- Filename and percentage where it failed.
-- Whether it fails at the same file on repeated runs.
-- Whether the destination was writable and had adequate space.
-- Any wrapper options or changes from this guide.
-
-“Unarc `-11`” alone is insufficient because the same code may accompany
-different write, memory, codec, or archive-integrity failures.
-
-### 11. Stop Wine cleanly after an error
+### 10. Stop Wine cleanly after an error
 
 Close the installer window first. Then stop only this prefix:
 
@@ -379,7 +296,7 @@ pgrep -af "$WINEPREFIX|Setup.exe|Setup.tmp|cls-(lolz|srep)|oo2rec" || true
 Do not use broad commands such as `pkill wine` if another Wine game or
 application may be running.
 
-### 12. Verify a completed installation
+### 11. Verify a completed installation
 
 Inspect the output:
 
@@ -397,7 +314,7 @@ Do not launch the game with this installer Wine prefix by default. Create a
 separate runtime prefix and follow
 [Launch games with UMU](launch-games-with-umu.md).
 
-### 13. Clean up after the game is verified
+### 12. Clean up after the game is verified
 
 The following are disposable after the installed game launches and its files
 have been verified:
@@ -420,26 +337,6 @@ Before deleting a partial installation or prefix, inspect it for:
 
 See [Extract one repack component](extract-one-repack-component.md) when only a
 language or audio archive is needed.
-
-## Graphical alternatives
-
-The same separation still applies when using a GUI:
-
-- Lutris can manage Wine runners and prefixes.
-- Bottles can manage isolated Wine environments.
-- Heroic can launch independently installed games with Wine/Proton.
-- Steam can add an installer or game as a non-Steam shortcut.
-
-Use whichever interface is clearest, but retain the exact patched installer
-runner when diagnosing the compatibility problems covered here. Switching from
-the CLI to a GUI does not reproduce the fix unless that GUI is configured to
-use the same Wine build, prefix, source files and destination.
-
-Community references:
-
-- [Lutris repack installation guide](https://www.reddit.com/r/LinuxCrackSupport/comments/yqfirv/)
-- [Lutris troubleshooting guide](https://www.reddit.com/r/LinuxCrackSupport/comments/1rlpyg4/)
-- [fitgirl-wine testing thread](https://www.reddit.com/r/LinuxCrackSupport/comments/1v6so9f/)
 
 ## Generic template for another repack
 
