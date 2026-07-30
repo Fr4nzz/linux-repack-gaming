@@ -26,9 +26,9 @@ export PROTONPATH="GE-Proton"
 umu-run "/path/to/game/Game.exe"
 ```
 
-`PROTONPATH=GE-Proton` asks UMU to obtain and use its supported current
-GE-Proton choice. Pin an absolute runner directory after validation so an
-automatic update cannot change a working game unexpectedly.
+`PROTONPATH=GE-Proton` asks UMU to obtain its latest supported GE-Proton. Use
+this for the first test. Pin the working runner afterward so an update cannot
+change the game unexpectedly.
 
 On CachyOS, a packaged runner can instead be installed and selected explicitly:
 
@@ -156,16 +156,17 @@ Turn it off for normal play.
 
 ## 7. Proton version policy
 
-1. Start a new game with UMU's current supported runner or a current GE-Proton.
+1. Start with the latest stable Proton or GE-Proton supported by UMU.
 2. Test the menu, settings, a representative gameplay load, saving, and exit.
 3. Pin the exact working runner directory.
-4. Change runners only for a reproduced compatibility issue or a controlled
-   upgrade test.
-5. Keep the previous runner until the new one passes the same save and scene.
+4. Try an older or title-specific build only for a reproduced regression or
+   known compatibility fix.
+5. Test later releases against the same save and scene before replacing the
+   pinned build.
 
-A higher version number does not guarantee better behavior for a specific game.
-AC Shadows required a debug/breadcrumb build for a reproducible NVIDIA hang.
-Replacing it with a newer GE release would remove the tested workaround.
+The latest stable build is the default, not a guarantee. AC Shadows required a
+debug/breadcrumb build for a reproducible NVIDIA hang, so that game keeps its
+tested exception.
 
 ## 8. Check for a clean exit
 

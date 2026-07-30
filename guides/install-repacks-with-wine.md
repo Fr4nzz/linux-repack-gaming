@@ -13,8 +13,8 @@ for:
 - KaOs installers with missing progress rendering.
 - DODI installers whose Oodle helper cannot be found by Wine.
 
-The patched Wine runs the installer. Use Proton or another tested runner for
-the installed game.
+The patched Wine runs the installer. Start the installed game with the latest
+stable Proton supported by UMU, then pin the version that passes testing.
 
 The complete example uses the same two fixes that allowed the tested Assassin's
 Creed Shadows DODI installer to extract approximately 151 GB under Linux:

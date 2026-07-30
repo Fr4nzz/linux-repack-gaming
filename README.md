@@ -42,7 +42,7 @@ be more convenient for other users. These guides cover the tested workflow.
 |---|---|
 | UMU | CLI-friendly Proton launching outside Steam |
 | Isolated prefixes | Changes made for one game do not affect the others |
-| Configurable Proton build | Start current; pin a different build only after a demonstrated compatibility difference |
+| Configurable Proton build | Test the latest stable build first, then pin the version that works |
 | Shell launchers | Inspectable, reproducible, and easy for humans or agents to edit |
 | Gamescope when useful | Standard wrapper for scaling, capture, fullscreen isolation, or known fixes; direct launch remains available |
 | Optional Steam integration | Adds Gamepad UI and Steam Input without making Steam responsible for the installation |
